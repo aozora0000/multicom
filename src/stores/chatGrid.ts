@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { DEFAULT_LAYOUT, LAYOUT_OPTIONS, LAYOUTS, type Layout } from "../constants";
+import { DEFAULT_LAYOUT, LAYOUT_GRIDS, LAYOUT_OPTIONS, LAYOUTS, type Layout } from "../constants";
 import { applyQueryParamsToSnapshot } from "../utils/query";
 import { swapValues } from "../utils/reorder";
 import { buildShareUrl } from "../utils/share";
@@ -13,10 +13,12 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   const status = ref("");
   const controlsHidden = ref(false);
   const helpOpen = ref(false);
+  const editMode = ref(false);
   const draggedIndex = ref<number | null>(null);
   const draftValues = ref<string[]>(normalizeValues([]));
 
   const layoutOptions = LAYOUT_OPTIONS;
+  const layoutGrids = LAYOUT_GRIDS;
   const visibleValues = computed(() => values.value.slice(0, LAYOUTS[currentLayout.value]));
   const shareUrl = computed(() => buildShareUrl(location.href, currentLayout.value, values.value));
 
@@ -55,11 +57,12 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   }
 
   function startDrag(index: number) {
+    if (!editMode.value) return;
     draggedIndex.value = index;
   }
 
   function dropOn(index: number) {
-    if (draggedIndex.value === null) return;
+    if (!editMode.value || draggedIndex.value === null) return;
     values.value = swapValues(values.value, draggedIndex.value, index);
     draftValues.value = swapValues(draftValues.value, draggedIndex.value, index);
     draggedIndex.value = null;
@@ -69,17 +72,34 @@ export const useChatGridStore = defineStore("chatGrid", () => {
 
   function addDraftToWindow(index: number) {
     const value = String(draftValues.value[index] || "").trim();
-    if (!value) return;
+    if (!value) {
+      values.value[index] = "";
+      applyChats();
+      pushShareUrl();
+      return;
+    }
 
     if (!extractYouTubeVideoId(value)) {
       status.value = `w${index + 1} のURLを認識できませんでした`;
       return;
     }
 
-    values.value[index] = normalizeYouTubeInput(value);
-    draftValues.value[index] = "";
+    const normalizedValue = normalizeYouTubeInput(value);
+    values.value[index] = normalizedValue;
+    draftValues.value[index] = normalizedValue;
     applyChats();
     pushShareUrl();
+  }
+
+  function toggleEditMode() {
+    if (editMode.value) {
+      editMode.value = false;
+      draggedIndex.value = null;
+      return;
+    }
+
+    draftValues.value = [...values.value];
+    editMode.value = true;
   }
 
   function cancelDrag() {
@@ -124,8 +144,10 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     currentLayout,
     draggedIndex,
     draftValues,
+    editMode,
     helpOpen,
     layoutOptions,
+    layoutGrids,
     shareUrl,
     status,
     values,
@@ -144,6 +166,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     setLayout,
     showControls,
     startDrag,
+    toggleEditMode,
   };
 });
 

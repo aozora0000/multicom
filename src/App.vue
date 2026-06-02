@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import type { Layout } from "./constants";
 import { useChatGridStore } from "./stores/chatGrid";
 
 const store = useChatGridStore();
-const { controlsHidden, currentLayout, draggedIndex, draftValues, status, values, visibleValues } = storeToRefs(store);
+const { controlsHidden, currentLayout, draggedIndex, draftValues, editMode, status, visibleValues } =
+  storeToRefs(store);
+const layoutMenuRef = ref<HTMLDetailsElement | null>(null);
 
 onMounted(() => {
   store.initialize();
@@ -25,6 +28,19 @@ function handleKeydown(event: KeyboardEvent) {
     store.showControls();
   }
 }
+
+function selectLayout(layout: Layout) {
+  store.setLayout(layout);
+  layoutMenuRef.value?.removeAttribute("open");
+}
+
+function getLayoutIconStyle(layout: Layout) {
+  const grid = store.layoutGrids[layout];
+  return {
+    gridTemplateColumns: `repeat(${grid.columns}, 1fr)`,
+    gridTemplateRows: `repeat(${grid.rows}, 1fr)`,
+  };
+}
 </script>
 
 <template>
@@ -33,7 +49,6 @@ function handleKeydown(event: KeyboardEvent) {
       <div class="top-row">
         <div class="top-copy">
           <span class="title">YouTubeコメントを複数窓で見るやつ</span>
-          <span class="hint">URL引数: ?l=2x2&w1=...&w2=...&w3=...&w4=...</span>
         </div>
         <a
           class="repo-link"
@@ -52,16 +67,53 @@ function handleKeydown(event: KeyboardEvent) {
       </div>
 
       <div class="button-row">
-        <label class="layout-select-wrap">
+        <div class="layout-select-wrap">
           <span>レイアウト</span>
-          <select v-model="currentLayout" @change="store.setLayout(currentLayout)">
-            <option v-for="layout in store.layoutOptions" :key="layout" :value="layout">
-              {{ layout }}
-            </option>
-          </select>
-        </label>
-        <button type="button" @click="store.applyChats">反映</button>
-        <button type="button" @click="store.openHelp()">使い方</button>
+          <details ref="layoutMenuRef" class="layout-menu">
+            <summary class="layout-menu-trigger" data-tooltip="レイアウトを変更">
+              <span
+                class="layout-icon"
+                aria-hidden="true"
+                :style="getLayoutIconStyle(currentLayout)"
+              >
+                <span
+                  v-for="cellIndex in store.layoutGrids[currentLayout].columns * store.layoutGrids[currentLayout].rows"
+                  :key="cellIndex"
+                ></span>
+              </span>
+              <span>{{ currentLayout }}</span>
+            </summary>
+            <div class="layout-menu-options" role="listbox" aria-label="レイアウト">
+              <button
+                v-for="layout in store.layoutOptions"
+                :key="layout"
+                type="button"
+                class="layout-option"
+                :class="{ selected: currentLayout === layout }"
+                :aria-selected="currentLayout === layout"
+                role="option"
+                @click="selectLayout(layout)"
+              >
+                <span class="layout-icon" aria-hidden="true" :style="getLayoutIconStyle(layout)">
+                  <span
+                    v-for="cellIndex in store.layoutGrids[layout].columns * store.layoutGrids[layout].rows"
+                    :key="cellIndex"
+                  ></span>
+                </span>
+                <span>{{ layout }}</span>
+              </button>
+            </div>
+          </details>
+        </div>
+        <button
+          type="button"
+          :class="{ active: editMode }"
+          data-tooltip="枠内でURL変更、枠をD&Dで場所入れ替え"
+          @click="store.toggleEditMode"
+        >
+          {{ editMode ? "編集終了" : "編集" }}
+        </button>
+        <button type="button" data-tooltip="操作方法をモーダルで表示" @click="store.openHelp()">使い方</button>
         <button
           type="button"
           data-tooltip="復帰ボタンまたはEscで操作欄を表示"
@@ -71,29 +123,6 @@ function handleKeydown(event: KeyboardEvent) {
         </button>
       </div>
 
-      <div class="inputs">
-        <div
-          v-for="(_, index) in visibleValues"
-          :key="index"
-          class="input-wrap"
-          :class="{ dragging: draggedIndex === index }"
-          data-tooltip="ドラッグ&ドロップで位置を入れ替え"
-          draggable="true"
-          @dragstart="store.startDrag(index)"
-          @dragover.prevent
-          @drop.prevent="store.dropOn(index)"
-          @dragend="store.cancelDrag"
-        >
-          <label :for="`w${index + 1}`">w{{ index + 1 }}</label>
-          <input
-            :id="`w${index + 1}`"
-            v-model.trim="values[index]"
-            placeholder="動画ID / YouTube URL / live_chat URL"
-            autocomplete="off"
-            @change="store.applyChats"
-          />
-        </div>
-      </div>
       <div class="status">
         <span>{{ status }}</span>
         <span aria-hidden="true">/</span>
@@ -113,13 +142,25 @@ function handleKeydown(event: KeyboardEvent) {
       type="button"
       class="restore-controls"
       title="操作欄を表示 / Escでも復帰"
+      data-tooltip="隠した操作欄を表示"
       @click="store.showControls"
     >
       操作欄を表示
     </button>
 
     <main class="stage" :class="`layout-${currentLayout}`">
-      <div v-for="(value, index) in visibleValues" :key="index" class="cell">
+      <div
+        v-for="(value, index) in visibleValues"
+        :key="index"
+        class="cell"
+        :class="{ editing: editMode, dragging: draggedIndex === index }"
+        :data-tooltip="editMode ? '枠をドラッグ&ドロップで位置を入れ替え' : undefined"
+        :draggable="editMode"
+        @dragstart="store.startDrag(index)"
+        @dragover.prevent
+        @drop.prevent="store.dropOn(index)"
+        @dragend="store.cancelDrag"
+      >
         <iframe
           v-if="store.getIframeUrl(value)"
           :src="store.getIframeUrl(value)"
@@ -127,17 +168,29 @@ function handleKeydown(event: KeyboardEvent) {
           allow="clipboard-write"
         ></iframe>
         <div v-else class="placeholder">
-          <form class="placeholder-content" @submit.prevent="store.addDraftToWindow(index)">
-            <p>{{ store.getPlaceholderText(index) }}</p>
-            <div class="placeholder-add-row">
-              <input
-                v-model.trim="draftValues[index]"
-                :aria-label="`w${index + 1} に追加するYouTube URLまたは動画ID`"
-                placeholder="動画ID / YouTube URL"
-                autocomplete="off"
-              />
-              <button type="submit">追加</button>
-            </div>
+          <p>{{ editMode ? store.getPlaceholderText(index) : `w${index + 1} は未設定です` }}</p>
+        </div>
+        <div
+          v-if="editMode"
+          class="cell-edit-layer"
+        >
+          <div class="cell-drag-label">w{{ index + 1 }} / ドラッグで移動</div>
+          <form
+            class="cell-editor"
+            @submit.prevent="store.addDraftToWindow(index)"
+            @mousedown.stop
+            @dragstart.stop
+          >
+            <label :for="`cell-w${index + 1}`">w{{ index + 1 }}</label>
+            <input
+              :id="`cell-w${index + 1}`"
+              v-model.trim="draftValues[index]"
+              :aria-label="`w${index + 1} のYouTube URLまたは動画ID`"
+              placeholder="動画ID / YouTube URL"
+              autocomplete="off"
+              @dragstart.stop
+            />
+            <button type="submit" data-tooltip="この枠のURLを更新" @dragstart.stop>更新</button>
           </form>
         </div>
       </div>
@@ -154,7 +207,13 @@ function handleKeydown(event: KeyboardEvent) {
         >
           <div class="help-modal-header">
             <h2 id="help-title">使い方</h2>
-            <button type="button" class="modal-close" aria-label="使い方を閉じる" @click="store.closeHelp()">
+            <button
+              type="button"
+              class="modal-close"
+              aria-label="使い方を閉じる"
+              data-tooltip="使い方を閉じる"
+              @click="store.closeHelp()"
+            >
               閉じる
             </button>
           </div>
@@ -163,25 +222,25 @@ function handleKeydown(event: KeyboardEvent) {
             <section>
               <h3>コメントを表示する</h3>
               <p>
-                上部の w1 から w8 にYouTubeの動画IDまたはURLを入力し、反映を押します。認識できたURLは動画IDだけに変換されます。
+                アイコン付きのレイアウトメニューで表示形式を選び、編集を押します。各枠の入力欄にYouTubeの動画IDまたはURLを入力して更新します。
               </p>
             </section>
             <section>
-              <h3>空枠から追加する</h3>
+              <h3>IDを変更する</h3>
               <p>
-                空の表示枠にある入力欄へYouTube URLまたは動画IDを入れて、追加を押すとその枠にコメントを読み込みます。
+                編集モード中は各枠の半透明レイヤー上でIDやURLを変更できます。入力欄を空にして更新すると、その枠を未設定にできます。
               </p>
             </section>
             <section>
               <h3>配置を変える</h3>
               <p>
-                レイアウトから表示形式を選べます。入力ブロックをドラッグ&ドロップすると、対応する表示枠の位置を入れ替えられます。
+                編集モード中に枠そのものをドラッグ&ドロップすると、表示枠の位置を入れ替えられます。
               </p>
             </section>
             <section>
               <h3>共有する</h3>
               <p>
-                レイアウト変更、D&D、空枠からの追加でURLバーが更新されます。共有URLをクリックすると現在のURLをコピーできます。
+                レイアウト変更、D&D、枠内の更新でURLバーが更新されます。共有URLをクリックすると現在のURLをコピーできます。
               </p>
             </section>
             <section>

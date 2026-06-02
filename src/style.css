@@ -106,7 +106,95 @@ body {
   align-items: center;
   gap: 6px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.layout-menu {
+  position: relative;
+}
+
+.layout-menu-trigger {
+  min-height: 38px;
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--button-bg);
+  color: var(--panel-fg);
+  padding: 8px 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.layout-menu-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.layout-menu-trigger:hover,
+.layout-menu[open] .layout-menu-trigger {
+  background: var(--button-bg-hover);
+}
+
+.layout-menu-trigger::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  opacity: 0.72;
+}
+
+.layout-menu-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  width: max-content;
+  min-width: 132px;
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.98);
+  padding: 6px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.36);
+}
+
+.layout-option {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: start;
+  gap: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 7px 8px;
+}
+
+.layout-option.selected {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fff;
+}
+
+.layout-icon {
+  width: 24px;
+  height: 20px;
+  display: grid;
+  gap: 2px;
+}
+
+.layout-icon span {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid rgba(244, 244, 245, 0.62);
+  border-radius: 2px;
+  background: rgba(244, 244, 245, 0.16);
 }
 
 .title {
@@ -156,6 +244,11 @@ input {
   font: inherit;
 }
 
+button,
+select {
+  min-height: 38px;
+}
+
 button {
   cursor: pointer;
 }
@@ -170,36 +263,6 @@ button.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-}
-
-.inputs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 8px;
-}
-
-.input-wrap {
-  display: grid;
-  gap: 4px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  cursor: grab;
-  padding: 2px;
-  position: relative;
-}
-
-.input-wrap.dragging {
-  border-color: var(--accent);
-  opacity: 0.62;
-}
-
-.input-wrap label {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.input-wrap input {
-  width: 100%;
 }
 
 .stage {
@@ -274,6 +337,15 @@ button.active {
   position: relative;
 }
 
+.cell.editing {
+  cursor: grab;
+}
+
+.cell.dragging {
+  outline: 2px solid var(--accent);
+  opacity: 0.72;
+}
+
 .cell iframe {
   display: block;
   width: 100%;
@@ -295,23 +367,55 @@ button.active {
     #111;
 }
 
-.placeholder-content {
-  width: min(420px, 100%);
-  display: grid;
-  gap: 12px;
-}
-
-.placeholder-content p {
+.placeholder p {
   margin: 0;
 }
 
-.placeholder-add-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
+.cell-edit-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: grab;
+  background: rgba(0, 0, 0, 0.28);
+  outline: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.placeholder-add-row input {
+.cell-drag-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(20, 20, 24, 0.9);
+  color: var(--panel-fg);
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.cell-editor {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.94);
+  padding: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.cell-editor label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cell-editor input {
   min-width: 0;
 }
 
@@ -446,14 +550,8 @@ button.active {
   transform: translateX(-50%) translateY(0);
 }
 
-@media (max-width: 900px) {
-  .inputs {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
-  }
-}
-
 @media (max-width: 520px) {
-  .inputs {
+  .cell-editor {
     grid-template-columns: 1fr;
   }
 }
