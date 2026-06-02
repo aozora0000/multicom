@@ -31,6 +31,11 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     currentLayout.value = snapshot.layout;
     values.value = normalizeVideoValues(snapshot.values);
     applyChats();
+
+    if (visibleValues.value.every((value) => !value)) {
+      draftValues.value = [...values.value];
+      editMode.value = true;
+    }
   }
 
   function setLayout(layout: Layout) {
