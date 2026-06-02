@@ -16,6 +16,11 @@ onUnmounted(() => {
 });
 
 function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape" && store.helpOpen) {
+    store.closeHelp();
+    return;
+  }
+
   if (event.key === "Escape" && store.controlsHidden) {
     store.showControls();
   }
@@ -56,6 +61,7 @@ function handleKeydown(event: KeyboardEvent) {
           </select>
         </label>
         <button type="button" @click="store.applyChats">反映</button>
+        <button type="button" @click="store.openHelp()">使い方</button>
         <button
           type="button"
           data-tooltip="復帰ボタンまたはEscで操作欄を表示"
@@ -136,5 +142,57 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
       </div>
     </main>
+
+    <Teleport to="body">
+      <div v-if="store.helpOpen" class="modal-backdrop" role="presentation" @click="store.closeHelp()">
+        <section
+          class="help-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="help-title"
+          @click.stop
+        >
+          <div class="help-modal-header">
+            <h2 id="help-title">使い方</h2>
+            <button type="button" class="modal-close" aria-label="使い方を閉じる" @click="store.closeHelp()">
+              閉じる
+            </button>
+          </div>
+
+          <div class="help-modal-body">
+            <section>
+              <h3>コメントを表示する</h3>
+              <p>
+                上部の w1 から w8 にYouTubeの動画IDまたはURLを入力し、反映を押します。認識できたURLは動画IDだけに変換されます。
+              </p>
+            </section>
+            <section>
+              <h3>空枠から追加する</h3>
+              <p>
+                空の表示枠にある入力欄へYouTube URLまたは動画IDを入れて、追加を押すとその枠にコメントを読み込みます。
+              </p>
+            </section>
+            <section>
+              <h3>配置を変える</h3>
+              <p>
+                レイアウトから表示形式を選べます。入力ブロックをドラッグ&ドロップすると、対応する表示枠の位置を入れ替えられます。
+              </p>
+            </section>
+            <section>
+              <h3>共有する</h3>
+              <p>
+                レイアウト変更、D&D、空枠からの追加でURLバーが更新されます。共有URLをクリックすると現在のURLをコピーできます。
+              </p>
+            </section>
+            <section>
+              <h3>操作欄を隠す</h3>
+              <p>
+                操作欄を隠すを押すと表示領域を広げられます。画面上部の復帰ボタンまたは Esc で操作欄を戻せます。
+              </p>
+            </section>
+          </div>
+        </section>
+      </div>
+    </Teleport>
   </div>
 </template>

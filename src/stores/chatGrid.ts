@@ -12,6 +12,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   const values = ref<string[]>(normalizeValues([]));
   const status = ref("");
   const controlsHidden = ref(false);
+  const helpOpen = ref(false);
   const draggedIndex = ref<number | null>(null);
   const draftValues = ref<string[]>(normalizeValues([]));
 
@@ -93,6 +94,14 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     controlsHidden.value = false;
   }
 
+  function openHelp() {
+    helpOpen.value = true;
+  }
+
+  function closeHelp() {
+    helpOpen.value = false;
+  }
+
   function getIframeUrl(value: string) {
     return buildLiveChatUrl(value, getEmbedDomain());
   }
@@ -115,6 +124,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     currentLayout,
     draggedIndex,
     draftValues,
+    helpOpen,
     layoutOptions,
     shareUrl,
     status,
@@ -124,10 +134,12 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     applyChats,
     copyShareUrl,
     cancelDrag,
+    closeHelp,
     getIframeUrl,
     getPlaceholderText,
     hideControls,
     initialize,
+    openHelp,
     dropOn,
     setLayout,
     showControls,

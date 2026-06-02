@@ -348,6 +348,71 @@ button.active {
   word-break: break-all;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.64);
+}
+
+.help-modal {
+  width: min(720px, 100%);
+  max-height: min(760px, 90vh);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.98);
+  color: var(--panel-fg);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.42);
+}
+
+.help-modal-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(20, 20, 24, 0.98);
+  padding: 14px 16px;
+}
+
+.help-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.modal-close {
+  padding: 6px 10px;
+}
+
+.help-modal-body {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.help-modal-body section {
+  display: grid;
+  gap: 6px;
+}
+
+.help-modal-body h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.help-modal-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 [data-tooltip] {
   position: relative;
 }
