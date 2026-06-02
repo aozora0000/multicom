@@ -7,7 +7,7 @@
 
 ## 現在の機能
 
-- レイアウトは `2x1`, `3x1`, `4x1`, `2x2`, `2x3`, `3x2`, `1x2`, `1x3`, `1x4` に対応しています。
+- レイアウトは `2x1`, `3x1`, `4x1`, `2x2`, `2x3`, `3x2`, `4x2`, `1x2`, `1x3`, `1x4` に対応しています。
 - 各枠には YouTube の動画ID、watch URL、youtu.be URL、embed URL、shorts URL、live URL を入力できます。
 - 現在のホスト名を `embed_domain` として使い、YouTube live chat の iframe URL を生成します。
 - `?l=2x2&w1=...&w2=...` のようなクエリパラメータで共有URLを作れます。

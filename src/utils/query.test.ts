@@ -11,28 +11,44 @@ describe("applyQueryParamsToSnapshot", () => {
       }),
     ).toEqual({
       layout: "1x3",
-      values: ["a", "old2", "c", "old4", "", ""],
+      values: ["a", "old2", "c", "old4", "", "", "", ""],
     });
   });
 
   it("ignores invalid layouts", () => {
     expect(applyQueryParamsToSnapshot("?l=invalid&w1=a", { layout: "3x1", values: [] })).toEqual({
       layout: "3x1",
-      values: ["a", "", "", "", "", ""],
+      values: ["a", "", "", "", "", "", "", ""],
     });
   });
 
   it("supports six-window layout query params", () => {
     expect(applyQueryParamsToSnapshot("?l=2x3&w5=e&w6=f", { values: [] })).toEqual({
       layout: "2x3",
-      values: ["", "", "", "", "e", "f"],
+      values: ["", "", "", "", "e", "f", "", ""],
+    });
+  });
+
+  it("supports eight-window layout query params", () => {
+    expect(applyQueryParamsToSnapshot("?l=4x2&w7=g&w8=h", { values: [] })).toEqual({
+      layout: "4x2",
+      values: ["", "", "", "", "", "", "g", "h"],
     });
   });
 });
 
 describe("normalizeValues", () => {
-  it("returns exactly six string values", () => {
-    expect(normalizeValues([1, "two", null, undefined, "extra"])).toEqual(["1", "two", "", "", "extra", ""]);
-    expect(normalizeValues("invalid")).toEqual(["", "", "", "", "", ""]);
+  it("returns exactly eight string values", () => {
+    expect(normalizeValues([1, "two", null, undefined, "extra"])).toEqual([
+      "1",
+      "two",
+      "",
+      "",
+      "extra",
+      "",
+      "",
+      "",
+    ]);
+    expect(normalizeValues("invalid")).toEqual(["", "", "", "", "", "", "", ""]);
   });
 });

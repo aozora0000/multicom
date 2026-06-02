@@ -24,4 +24,10 @@ describe("buildShareUrl", () => {
       "https://example.test/path?l=3x2&w1=a&w2=b&w3=c&w4=d&w5=e&w6=f",
     );
   });
+
+  it("includes eight windows for 4x2 layouts", () => {
+    expect(buildShareUrl("https://example.test/path", "4x2", ["a", "b", "c", "d", "e", "f", "g", "h"])).toBe(
+      "https://example.test/path?l=4x2&w1=a&w2=b&w3=c&w4=d&w5=e&w6=f&w7=g&w8=h",
+    );
+  });
 });
