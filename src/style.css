@@ -1,0 +1,244 @@
+:root {
+  --panel-bg: rgba(20, 20, 24, 0.94);
+  --panel-fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.14);
+  --button-bg: #27272a;
+  --button-bg-hover: #3f3f46;
+  --accent: #ef4444;
+  --gap: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #000;
+  color: var(--panel-fg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  flex: 0 0 auto;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  display: grid;
+  gap: 10px;
+  z-index: 10;
+}
+
+.app.controls-hidden .controls {
+  display: none;
+}
+
+.restore-controls {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: none;
+  opacity: 0.18;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(24, 24, 27, 0.78);
+  color: #fff;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: opacity 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.app.controls-hidden .restore-controls {
+  display: block;
+}
+
+.restore-controls:hover,
+.restore-controls:focus-visible {
+  opacity: 0.92;
+  background: rgba(24, 24, 27, 0.96);
+  outline: none;
+  transform: translateX(-50%) translateY(1px);
+}
+
+.top-row,
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+button,
+select,
+input {
+  border: 1px solid var(--border);
+  background: var(--button-bg);
+  color: var(--panel-fg);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover,
+select:hover,
+input:hover {
+  background: var(--button-bg-hover);
+}
+
+button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.input-wrap {
+  display: grid;
+  gap: 4px;
+}
+
+.input-wrap label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.input-wrap input {
+  width: 100%;
+}
+
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100vw;
+  height: 100%;
+  display: grid;
+  gap: var(--gap);
+  background: #000;
+}
+
+.app.controls-hidden .stage {
+  height: 100vh;
+}
+
+.stage.layout-2x1 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+}
+
+.stage.layout-3x1 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+}
+
+.stage.layout-4x1 {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr;
+}
+
+.stage.layout-2x2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.stage.layout-1x2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.stage.layout-1x3 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.stage.layout-1x4 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.cell {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #111;
+  position: relative;
+}
+
+.cell iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  color: #a1a1aa;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%) 0 0 / 20px 20px,
+    #111;
+}
+
+.status {
+  min-height: 1.4em;
+  color: var(--muted);
+  font-size: 12px;
+  word-break: break-all;
+}
+
+@media (max-width: 900px) {
+  .inputs {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .inputs {
+    grid-template-columns: 1fr;
+  }
+}
