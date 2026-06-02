@@ -139,6 +139,7 @@ button.active {
   border-radius: 8px;
   cursor: grab;
   padding: 2px;
+  position: relative;
 }
 
 .input-wrap.dragging {
@@ -237,7 +238,62 @@ button.active {
   min-height: 1.4em;
   color: var(--muted);
   font-size: 12px;
-  word-break: break-all;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-share {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  padding: 0;
+  position: relative;
+}
+
+.status-share:hover,
+.status-share:focus-visible {
+  color: var(--panel-fg);
+  background: transparent;
+  text-decoration: underline;
+  outline: none;
+}
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 20;
+  width: max-content;
+  max-width: min(260px, 90vw);
+  transform: translateX(-50%) translateY(2px);
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(24, 24, 27, 0.96);
+  color: var(--panel-fg);
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: normal;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 @media (max-width: 900px) {

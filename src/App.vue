@@ -26,7 +26,7 @@ function handleKeydown(event: KeyboardEvent) {
   <div class="app" :class="{ 'controls-hidden': controlsHidden }">
     <section class="controls">
       <div class="top-row">
-        <span class="title">YouTube Live Chat Grid</span>
+        <span class="title">YouTubeコメントを複数窓で見るやつ</span>
         <span class="hint">URL引数: ?l=2x2&w1=...&w2=...&w3=...&w4=...</span>
       </div>
 
@@ -41,7 +41,6 @@ function handleKeydown(event: KeyboardEvent) {
           {{ layout }}
         </button>
         <button type="button" @click="store.applyChats">反映</button>
-        <button type="button" @click="store.copyShareUrl">共有URLをコピー</button>
         <button type="button" @click="store.hideControls">操作欄を隠す</button>
       </div>
 
@@ -51,6 +50,7 @@ function handleKeydown(event: KeyboardEvent) {
           :key="index"
           class="input-wrap"
           :class="{ dragging: draggedIndex === index }"
+          data-tooltip="ドラッグ&ドロップで位置を入れ替え"
           draggable="true"
           @dragstart="store.startDrag(index)"
           @dragover.prevent
@@ -67,7 +67,18 @@ function handleKeydown(event: KeyboardEvent) {
           />
         </div>
       </div>
-      <div class="status">{{ status }}</div>
+      <div class="status">
+        <span>{{ status }}</span>
+        <span aria-hidden="true">/</span>
+        <button
+          type="button"
+          class="status-share"
+          data-tooltip="クリックで共有URLをコピー"
+          @click="store.copyShareUrl"
+        >
+          共有URL
+        </button>
+      </div>
     </section>
 
     <button

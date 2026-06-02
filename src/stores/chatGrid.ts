@@ -35,9 +35,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
 
   function applyChats() {
     const loadedCount = visibleValues.value.filter((value) => extractYouTubeVideoId(value)).length;
-    status.value = loadedCount
-      ? `読み込み: ${loadedCount}件 / 共有URL: ${shareUrl.value}`
-      : `共有URL: ${shareUrl.value}`;
+    status.value = `読み込み: ${loadedCount}件`;
   }
 
   async function copyShareUrl() {
@@ -45,9 +43,9 @@ export const useChatGridStore = defineStore("chatGrid", () => {
 
     try {
       await navigator.clipboard.writeText(url);
-      status.value = `共有URLをコピーしました: ${url}`;
+      status.value = "共有URLをコピーしました";
     } catch {
-      status.value = `コピーできませんでした。手動でコピーしてください: ${url}`;
+      status.value = "共有URLをコピーできませんでした";
     }
   }
 

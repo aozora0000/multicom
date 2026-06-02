@@ -1,5 +1,7 @@
 {
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
@@ -15,5 +17,9 @@
     "vite": "latest",
     "vitest": "latest",
     "vue-tsc": "latest"
+  },
+  "engines": {
+    "node": ">=22.22.0",
+    "npm": "pnpmを使ってください。"
   }
 }
