@@ -89,6 +89,14 @@ body {
   gap: 8px;
 }
 
+.layout-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .title {
   font-weight: 700;
   margin-right: 8px;
@@ -190,6 +198,16 @@ button.active {
   grid-template-rows: repeat(2, 1fr);
 }
 
+.stage.layout-2x3 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.stage.layout-3x2 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
 .stage.layout-1x2 {
   grid-template-columns: 1fr;
   grid-template-rows: repeat(2, 1fr);
@@ -234,6 +252,26 @@ button.active {
     #111;
 }
 
+.placeholder-content {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 12px;
+}
+
+.placeholder-content p {
+  margin: 0;
+}
+
+.placeholder-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.placeholder-add-row input {
+  min-width: 0;
+}
+
 .status {
   min-height: 1.4em;
   color: var(--muted);
@@ -261,6 +299,10 @@ button.active {
   background: transparent;
   text-decoration: underline;
   outline: none;
+}
+
+.status-url {
+  word-break: break-all;
 }
 
 [data-tooltip] {

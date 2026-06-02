@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT, isLayout, type Layout } from "../constants";
+import { DEFAULT_LAYOUT, MAX_WINDOW_COUNT, isLayout, type Layout } from "../constants";
 import { normalizeValues } from "./values";
 
 export type ChatGridSnapshot = {
@@ -18,7 +18,7 @@ export function applyQueryParamsToSnapshot(search: string, snapshot: Partial<Cha
     next.layout = queryLayout;
   }
 
-  for (let i = 1; i <= 4; i += 1) {
+  for (let i = 1; i <= MAX_WINDOW_COUNT; i += 1) {
     const value = params.get(`w${i}`);
     if (value !== null) next.values[i - 1] = value;
   }

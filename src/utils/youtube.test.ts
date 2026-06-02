@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildLiveChatUrl, extractYouTubeVideoId } from "./youtube";
+import { buildLiveChatUrl, extractYouTubeVideoId, normalizeYouTubeInput } from "./youtube";
 
 describe("extractYouTubeVideoId", () => {
   it("accepts a raw video id", () => {
@@ -29,5 +29,15 @@ describe("buildLiveChatUrl", () => {
   it("returns an empty string without a video id or embed domain", () => {
     expect(buildLiveChatUrl("", "localhost")).toBe("");
     expect(buildLiveChatUrl("dQw4w9WgXcQ", "")).toBe("");
+  });
+});
+
+describe("normalizeYouTubeInput", () => {
+  it("converts recognized YouTube URLs to ids", () => {
+    expect(normalizeYouTubeInput("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10")).toBe("dQw4w9WgXcQ");
+  });
+
+  it("keeps unrecognized values as trimmed input", () => {
+    expect(normalizeYouTubeInput(" custom value ")).toBe("custom value");
   });
 });

@@ -7,12 +7,14 @@
 
 ## 現在の機能
 
-- レイアウトは `2x1`, `3x1`, `4x1`, `2x2`, `1x2`, `1x3`, `1x4` に対応しています。
+- レイアウトは `2x1`, `3x1`, `4x1`, `2x2`, `2x3`, `3x2`, `1x2`, `1x3`, `1x4` に対応しています。
 - 各枠には YouTube の動画ID、watch URL、youtu.be URL、embed URL、shorts URL、live URL を入力できます。
 - 現在のホスト名を `embed_domain` として使い、YouTube live chat の iframe URL を生成します。
 - `?l=2x2&w1=...&w2=...` のようなクエリパラメータで共有URLを作れます。
 - 操作欄は非表示にでき、復帰ボタンまたは `Escape` で表示できます。
 - 入力ブロックのドラッグ&ドロップで表示位置を入れ替えられます。
+- レイアウトは操作欄から後で `2x2` から `1x4` などへ変更できます。
+- 空の表示枠から、その枠に直接YouTube URLまたは動画IDを追加できます。
 - 状態は localStorage に保存しません。共有可能な初期状態はクエリパラメータを使います。
 
 ## アーキテクチャ
@@ -31,6 +33,12 @@
 - テストコマンドは `pnpm test` です。
 - ビルドと型チェックのコマンドは `pnpm build` です。
 - 純粋関数のテストは `src/utils/*.test.ts` に置きます。
+
+## 公開
+
+- GitHub Pages への公開は `.github/workflows/deploy-pages.yml` の GitHub Actions で行います。
+- Vite の `base` は `GITHUB_REPOSITORY` または git remote のリポジトリ名から `/<repo>/` を自動設定します。
+- カスタムドメインやユーザー/組織Pagesで `/` を使う必要がある場合は、ビルド時に `VITE_BASE=/` を指定してください。
 
 ## 実装メモ
 

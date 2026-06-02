@@ -36,6 +36,11 @@ export function buildLiveChatUrl(value: string, domain: string) {
   return `https://www.youtube.com/live_chat?v=${encodeURIComponent(videoId)}&embed_domain=${encodeURIComponent(domain)}`;
 }
 
+export function normalizeYouTubeInput(raw: string) {
+  const value = String(raw || "").trim();
+  return extractYouTubeVideoId(value) || value;
+}
+
 function cleanId(value: string | null | undefined) {
   const id = String(value || "").trim();
   return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";

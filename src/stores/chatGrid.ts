@@ -4,14 +4,16 @@ import { DEFAULT_LAYOUT, LAYOUT_OPTIONS, LAYOUTS, type Layout } from "../constan
 import { applyQueryParamsToSnapshot } from "../utils/query";
 import { swapValues } from "../utils/reorder";
 import { buildShareUrl } from "../utils/share";
-import { buildLiveChatUrl, extractYouTubeVideoId } from "../utils/youtube";
+import { normalizeValues } from "../utils/values";
+import { buildLiveChatUrl, extractYouTubeVideoId, normalizeYouTubeInput } from "../utils/youtube";
 
 export const useChatGridStore = defineStore("chatGrid", () => {
   const currentLayout = ref<Layout>(DEFAULT_LAYOUT);
-  const values = ref<string[]>(["", "", "", ""]);
+  const values = ref<string[]>(normalizeValues([]));
   const status = ref("");
   const controlsHidden = ref(false);
   const draggedIndex = ref<number | null>(null);
+  const draftValues = ref<string[]>(normalizeValues([]));
 
   const layoutOptions = LAYOUT_OPTIONS;
   const visibleValues = computed(() => values.value.slice(0, LAYOUTS[currentLayout.value]));
@@ -24,16 +26,18 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     });
 
     currentLayout.value = snapshot.layout;
-    values.value = snapshot.values;
+    values.value = normalizeVideoValues(snapshot.values);
     applyChats();
   }
 
   function setLayout(layout: Layout) {
     currentLayout.value = layout;
     applyChats();
+    pushShareUrl();
   }
 
   function applyChats() {
+    values.value = normalizeVideoValues(values.value);
     const loadedCount = visibleValues.value.filter((value) => extractYouTubeVideoId(value)).length;
     status.value = `読み込み: ${loadedCount}件`;
   }
@@ -56,8 +60,25 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   function dropOn(index: number) {
     if (draggedIndex.value === null) return;
     values.value = swapValues(values.value, draggedIndex.value, index);
+    draftValues.value = swapValues(draftValues.value, draggedIndex.value, index);
     draggedIndex.value = null;
     applyChats();
+    pushShareUrl();
+  }
+
+  function addDraftToWindow(index: number) {
+    const value = String(draftValues.value[index] || "").trim();
+    if (!value) return;
+
+    if (!extractYouTubeVideoId(value)) {
+      status.value = `w${index + 1} のURLを認識できませんでした`;
+      return;
+    }
+
+    values.value[index] = normalizeYouTubeInput(value);
+    draftValues.value[index] = "";
+    applyChats();
+    pushShareUrl();
   }
 
   function cancelDrag() {
@@ -82,15 +103,24 @@ export const useChatGridStore = defineStore("chatGrid", () => {
       : "file://ではembed_domainを作れません。HTTPサーバー経由で開いてください。";
   }
 
+  function pushShareUrl() {
+    const url = shareUrl.value;
+    if (url !== location.href) {
+      history.pushState({ layout: currentLayout.value }, "", url);
+    }
+  }
+
   return {
     controlsHidden,
     currentLayout,
     draggedIndex,
+    draftValues,
     layoutOptions,
     shareUrl,
     status,
     values,
     visibleValues,
+    addDraftToWindow,
     applyChats,
     copyShareUrl,
     cancelDrag,
@@ -107,4 +137,8 @@ export const useChatGridStore = defineStore("chatGrid", () => {
 
 function getEmbedDomain() {
   return location.hostname || "";
+}
+
+function normalizeVideoValues(values: string[]) {
+  return normalizeValues(values).map((value) => normalizeYouTubeInput(value));
 }

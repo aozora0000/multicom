@@ -4,7 +4,7 @@ import { onMounted, onUnmounted } from "vue";
 import { useChatGridStore } from "./stores/chatGrid";
 
 const store = useChatGridStore();
-const { controlsHidden, currentLayout, draggedIndex, layoutOptions, status, values, visibleValues } = storeToRefs(store);
+const { controlsHidden, currentLayout, draggedIndex, draftValues, status, values, visibleValues } = storeToRefs(store);
 
 onMounted(() => {
   store.initialize();
@@ -31,17 +31,22 @@ function handleKeydown(event: KeyboardEvent) {
       </div>
 
       <div class="button-row">
-        <button
-          v-for="layout in layoutOptions"
-          :key="layout"
-          type="button"
-          :class="{ active: currentLayout === layout }"
-          @click="store.setLayout(layout)"
-        >
-          {{ layout }}
-        </button>
+        <label class="layout-select-wrap">
+          <span>レイアウト</span>
+          <select v-model="currentLayout" @change="store.setLayout(currentLayout)">
+            <option v-for="layout in store.layoutOptions" :key="layout" :value="layout">
+              {{ layout }}
+            </option>
+          </select>
+        </label>
         <button type="button" @click="store.applyChats">反映</button>
-        <button type="button" @click="store.hideControls">操作欄を隠す</button>
+        <button
+          type="button"
+          data-tooltip="復帰ボタンまたはEscで操作欄を表示"
+          @click="store.hideControls"
+        >
+          操作欄を隠す
+        </button>
       </div>
 
       <div class="inputs">
@@ -78,6 +83,7 @@ function handleKeydown(event: KeyboardEvent) {
         >
           共有URL
         </button>
+        <span class="status-url">{{ store.shareUrl }}</span>
       </div>
     </section>
 
@@ -99,7 +105,18 @@ function handleKeydown(event: KeyboardEvent) {
           allow="clipboard-write"
         ></iframe>
         <div v-else class="placeholder">
-          {{ store.getPlaceholderText(index) }}
+          <form class="placeholder-content" @submit.prevent="store.addDraftToWindow(index)">
+            <p>{{ store.getPlaceholderText(index) }}</p>
+            <div class="placeholder-add-row">
+              <input
+                v-model.trim="draftValues[index]"
+                :aria-label="`w${index + 1} に追加するYouTube URLまたは動画ID`"
+                placeholder="動画ID / YouTube URL"
+                autocomplete="off"
+              />
+              <button type="submit">追加</button>
+            </div>
+          </form>
         </div>
       </div>
     </main>

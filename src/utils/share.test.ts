@@ -18,4 +18,10 @@ describe("buildShareUrl", () => {
       "https://example.test/path?l=1x2&w1=custom",
     );
   });
+
+  it("includes six windows for 2x3 and 3x2 layouts", () => {
+    expect(buildShareUrl("https://example.test/path", "3x2", ["a", "b", "c", "d", "e", "f"])).toBe(
+      "https://example.test/path?l=3x2&w1=a&w2=b&w3=c&w4=d&w5=e&w6=f",
+    );
+  });
 });
