@@ -135,6 +135,15 @@ button.active {
 .input-wrap {
   display: grid;
   gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: grab;
+  padding: 2px;
+}
+
+.input-wrap.dragging {
+  border-color: var(--accent);
+  opacity: 0.62;
 }
 
 .input-wrap label {
