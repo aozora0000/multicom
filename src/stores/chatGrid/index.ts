@@ -115,6 +115,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   }
 
   function hideControls() {
+    if (editMode.value) return;
     controlsHidden.value = true;
   }
 

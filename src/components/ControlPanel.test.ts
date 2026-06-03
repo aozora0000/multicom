@@ -36,6 +36,18 @@ describe("ControlPanel", () => {
     expect(wrapper.findAll("button").some((button) => button.text() === "編集終了")).toBe(true);
   });
 
+  it("disables hiding controls while editing", async () => {
+    const wrapper = mountControlPanel({ editMode: true });
+    const hideButton = wrapper.findAll("button").find((button) => button.text() === "操作欄を隠す");
+
+    expect(hideButton?.attributes("disabled")).toBeDefined();
+    expect(hideButton?.attributes("data-tooltip")).toBe("編集中は操作欄を隠せません");
+
+    await hideButton?.trigger("click");
+
+    expect(wrapper.emitted("hideControls")).toBeUndefined();
+  });
+
   it("emits control actions", async () => {
     const wrapper = mountControlPanel();
 

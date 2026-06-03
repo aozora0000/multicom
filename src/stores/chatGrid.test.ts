@@ -44,6 +44,18 @@ describe("chatGrid store", () => {
     expect(store.draftValues).toEqual(store.values);
   });
 
+  it("does not hide controls while editing", () => {
+    stubBrowserUrl("https://example.test/?w1=dQw4w9WgXcQ");
+    const store = useChatGridStore();
+    store.initialize();
+    store.toggleEditMode();
+
+    store.hideControls();
+
+    expect(store.editMode).toBe(true);
+    expect(store.controlsHidden).toBe(false);
+  });
+
   it("updates one draft through an action and pushes a normalized share URL", () => {
     const { pushState } = stubBrowserUrl("https://example.test/");
     const store = useChatGridStore();

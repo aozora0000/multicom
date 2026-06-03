@@ -47,7 +47,12 @@ const emit = defineEmits<{
         {{ editMode ? "編集終了" : "編集" }}
       </button>
       <button type="button" data-tooltip="操作方法をモーダルで表示" @click="emit('openHelp')">使い方</button>
-      <button type="button" data-tooltip="復帰ボタンまたはEscで操作欄を表示" @click="emit('hideControls')">
+      <button
+        type="button"
+        :disabled="editMode"
+        :data-tooltip="editMode ? '編集中は操作欄を隠せません' : '復帰ボタンまたはEscで操作欄を表示'"
+        @click="emit('hideControls')"
+      >
         操作欄を隠す
       </button>
     </div>
