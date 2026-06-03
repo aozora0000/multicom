@@ -28,6 +28,14 @@ defineEmits<{
             <p>YouTubeのコメントポップアップURLの仕様上、基本的に現在ライブ中の配信だけコメントを表示できます。通常動画や終了済み配信では表示されないことがあります。</p>
           </section>
           <section>
+            <h3>開発</h3>
+            <p>
+              このアプリは X の
+              <a href="https://x.com/kaihatsu0000" target="_blank" rel="noreferrer">@kaihatsu0000</a>
+              が作っています。
+            </p>
+          </section>
+          <section>
             <h3>IDを変更する</h3>
             <p>編集モード中は各枠の半透明レイヤー上でIDやURLを変更できます。入力欄を空にして更新すると、その枠を未設定にできます。</p>
           </section>

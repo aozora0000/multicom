@@ -14,6 +14,10 @@ describe("HelpModal", () => {
     expect(document.body.textContent).toContain("使い方");
     expect(document.body.textContent).toContain("コメントを表示する");
     expect(document.body.textContent).toContain("現在ライブ中の配信");
+    expect(document.body.textContent).toContain("@kaihatsu0000");
+    expect(document.body.querySelector<HTMLAnchorElement>('a[href="https://x.com/kaihatsu0000"]')?.textContent).toBe(
+      "@kaihatsu0000",
+    );
     expect(document.body.textContent).toContain("共有する");
     expect(document.body.textContent).toContain("外部ツールで開く");
     expect(document.body.textContent).toContain("リンク先サイトとは無関係");
