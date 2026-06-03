@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT, type Layout } from "../../constants";
+import { DEFAULT_LAYOUT, type Layout, type VtuberLayoutSelection } from "../../constants";
 import { normalizeValues } from "../../utils/values";
 
 export function createInitialChatGridState() {
@@ -11,5 +11,6 @@ export function createInitialChatGridState() {
     editMode: false,
     draggedIndex: null as number | null,
     draftValues: normalizeValues([]),
+    vtuberLayoutSelection: "auto" as VtuberLayoutSelection,
   };
 }

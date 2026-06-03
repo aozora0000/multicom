@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { LAYOUT_GRIDS, type Layout } from "../constants";
+import { LAYOUT_GRIDS, VTUBER_LAYOUT_OPTIONS, type Layout } from "../constants";
 import ControlPanel from "./ControlPanel.vue";
 
 function mountControlPanel(props = {}) {
@@ -9,12 +9,16 @@ function mountControlPanel(props = {}) {
     props: {
       currentLayout: "2x2" as Layout,
       editMode: false,
+      effectiveVtuberLayoutId: 6,
       layoutGrids: LAYOUT_GRIDS,
       layoutOptions: ["2x1", "2x2"] as Layout[],
       promoUrl: "https://aozora0000.github.io/multicom/",
       repoUrl: "https://github.com/aozora0000/multicom",
       shareUrl: "https://example.test/?l=2x2",
       status: "読み込み: 1件",
+      vtuberLayoutOptions: VTUBER_LAYOUT_OPTIONS,
+      vtuberLayoutSelection: "auto",
+      vtuberUrl: "https://vtuber.neocities.org/#/l-6/1:a",
       ...props,
     },
   });
@@ -35,7 +39,15 @@ describe("ControlPanel", () => {
     expect(new URL(wrapper.find(".x-now-link").attributes("href") || "").searchParams.get("text")).toBe(
       "今これ見てる YouTubeコメントを複数窓で見るやつ",
     );
+    expect(wrapper.find(".x-now-link").attributes("data-tooltip")).toBe("現在の共有URLをXに投稿");
+    expect(wrapper.find(".x-promo-link:not(.x-now-link)").attributes("data-tooltip")).toBe("アプリをXで宣伝");
     expect(wrapper.find(".github-link").attributes("href")).toBe("https://github.com/aozora0000/multicom");
+    expect(wrapper.find(".github-link").attributes("data-tooltip")).toBe("GitHubリポジトリを開く");
+    expect(wrapper.find(".vtuber-link").attributes("href")).toBe("https://vtuber.neocities.org/#/l-6/1:a");
+    expect(wrapper.find(".vtuber-link").text()).toBe("動画を開く");
+    expect(wrapper.find(".vtuber-link").attributes("data-tooltip")).toBe(
+      "YouTubeを複数窓でみるやつで動画を開く",
+    );
     expect(wrapper.findAll("button").some((button) => button.text() === "編集")).toBe(true);
   });
 
@@ -77,5 +89,13 @@ describe("ControlPanel", () => {
     await wrapper.findAll("button.layout-option")[0].trigger("click");
 
     expect(wrapper.emitted("selectLayout")?.[0]).toEqual(["2x1"]);
+  });
+
+  it("forwards vtuber layout selection", async () => {
+    const wrapper = mountControlPanel();
+
+    await wrapper.find('button[aria-label="レイアウト3"]').trigger("click");
+
+    expect(wrapper.emitted("selectVtuberLayout")?.[0]).toEqual([3]);
   });
 });

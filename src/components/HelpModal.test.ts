@@ -13,7 +13,10 @@ describe("HelpModal", () => {
 
     expect(document.body.textContent).toContain("使い方");
     expect(document.body.textContent).toContain("コメントを表示する");
+    expect(document.body.textContent).toContain("現在ライブ中の配信");
     expect(document.body.textContent).toContain("共有する");
+    expect(document.body.textContent).toContain("外部ツールで開く");
+    expect(document.body.textContent).toContain("リンク先サイトとは無関係");
   });
 
   it("emits close from the close button and backdrop", async () => {

@@ -19,6 +19,18 @@ describe("XPromoLink", () => {
     expect(wrapper.find("svg").exists()).toBe(true);
   });
 
+  it("renders a tooltip when provided", () => {
+    const wrapper = mount(XPromoLink, {
+      props: {
+        href: "https://aozora0000.github.io/multicom/",
+        text: "YouTubeコメントを複数窓で見るやつ",
+        tooltip: "アプリをXで宣伝",
+      },
+    });
+
+    expect(wrapper.attributes("data-tooltip")).toBe("アプリをXで宣伝");
+  });
+
   it("renders a custom label and share text", async () => {
     const wrapper = mount(XPromoLink, {
       props: { href: "https://example.test/?l=2x2&w1=abc123ABC-_", label: "今これ見てる", text: "今これ見てる" },

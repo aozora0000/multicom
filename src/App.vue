@@ -39,16 +39,21 @@ function handleKeydown(event: KeyboardEvent) {
     <ControlPanel
       :current-layout="currentLayout"
       :edit-mode="editMode"
+      :effective-vtuber-layout-id="store.effectiveVtuberLayoutId"
       :layout-grids="store.layoutGrids"
       :layout-options="store.layoutOptions"
       :promo-url="promoUrl"
       :repo-url="repoUrl"
       :share-url="store.shareUrl"
       :status="status"
+      :vtuber-layout-options="store.vtuberLayoutOptions"
+      :vtuber-layout-selection="store.vtuberLayoutSelection"
+      :vtuber-url="store.vtuberUrl"
       @copy-share-url="store.copyShareUrl"
       @hide-controls="store.hideControls"
       @open-help="store.openHelp"
       @select-layout="store.setLayout"
+      @select-vtuber-layout="store.setVtuberLayoutSelection"
       @toggle-edit-mode="store.toggleEditMode"
     />
 

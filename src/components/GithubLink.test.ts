@@ -12,4 +12,12 @@ describe("GithubLink", () => {
     expect(wrapper.attributes("target")).toBe("_blank");
     expect(wrapper.find("svg").exists()).toBe(true);
   });
+
+  it("renders a tooltip when provided", () => {
+    const wrapper = mount(GithubLink, {
+      props: { href: "https://github.com/aozora0000/multicom", tooltip: "GitHubリポジトリを開く" },
+    });
+
+    expect(wrapper.attributes("data-tooltip")).toBe("GitHubリポジトリを開く");
+  });
 });

@@ -70,6 +70,18 @@ describe("chatGrid store", () => {
     expect(pushState).toHaveBeenLastCalledWith({ layout: "2x2" }, "", "https://example.test/?l=2x2&w1=dQw4w9WgXcQ");
   });
 
+  it("builds a vtuber.neocities URL with automatic and selected layouts", () => {
+    stubBrowserUrl("https://example.test/?l=2x1&w1=WQMUTodrjYs&w2=aRg-vU-Ghes");
+    const store = useChatGridStore();
+    store.initialize();
+
+    expect(store.vtuberUrl).toBe("https://vtuber.neocities.org/#/l-3/1:WQMUTodrjYs,2:aRg-vU-Ghes");
+
+    store.setVtuberLayoutSelection(2);
+
+    expect(store.vtuberUrl).toBe("https://vtuber.neocities.org/#/l-2/1:WQMUTodrjYs,2:aRg-vU-Ghes");
+  });
+
   it("clears one window through an empty draft", () => {
     const { pushState } = stubBrowserUrl("https://example.test/?w1=dQw4w9WgXcQ&w2=abc123ABC-_");
     const store = useChatGridStore();

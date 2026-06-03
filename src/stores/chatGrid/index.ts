@@ -1,9 +1,16 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { LAYOUT_GRIDS, LAYOUT_OPTIONS, type Layout } from "../../constants";
+import {
+  LAYOUT_GRIDS,
+  LAYOUT_OPTIONS,
+  VTUBER_LAYOUT_OPTIONS,
+  type Layout,
+  type VtuberLayoutSelection,
+} from "../../constants";
 import { getLocationSearch, writeClipboardText } from "../../utils/browser";
 import { applyQueryParamsToSnapshot } from "../../utils/query";
 import { swapValues } from "../../utils/reorder";
+import { buildVtuberUrl, getAutoVtuberLayoutId } from "../../utils/vtuber";
 import { buildLiveChatUrl } from "../../utils/youtube";
 import { buildCurrentShareUrl, getEmbedDomain, pushShareUrl } from "./browser";
 import { applyDraftValue, normalizeVideoValues, setDraftValueAt } from "./mutations";
@@ -25,11 +32,19 @@ export const useChatGridStore = defineStore("chatGrid", () => {
   const editMode = ref(initialState.editMode);
   const draggedIndex = ref<number | null>(initialState.draggedIndex);
   const draftValues = ref<string[]>(initialState.draftValues);
+  const vtuberLayoutSelection = ref<VtuberLayoutSelection>(initialState.vtuberLayoutSelection);
 
   const layoutOptions = LAYOUT_OPTIONS;
   const layoutGrids = LAYOUT_GRIDS;
+  const vtuberLayoutOptions = VTUBER_LAYOUT_OPTIONS;
   const visibleValues = computed(() => getVisibleValues(currentLayout.value, values.value));
   const shareUrl = computed(() => buildCurrentShareUrl(currentLayout.value, values.value));
+  const effectiveVtuberLayoutId = computed(() =>
+    vtuberLayoutSelection.value === "auto"
+      ? getAutoVtuberLayoutId(currentLayout.value)
+      : vtuberLayoutSelection.value,
+  );
+  const vtuberUrl = computed(() => buildVtuberUrl(currentLayout.value, values.value, effectiveVtuberLayoutId.value));
 
   function initialize() {
     const snapshot = applyQueryParamsToSnapshot(getLocationSearch(), {
@@ -51,6 +66,10 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     currentLayout.value = layout;
     applyChats();
     syncShareUrl();
+  }
+
+  function setVtuberLayoutSelection(selection: VtuberLayoutSelection) {
+    vtuberLayoutSelection.value = selection;
   }
 
   function applyChats() {
@@ -155,6 +174,10 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     shareUrl,
     status,
     values,
+    effectiveVtuberLayoutId,
+    vtuberLayoutOptions,
+    vtuberLayoutSelection,
+    vtuberUrl,
     visibleValues,
     addDraftToWindow,
     applyChats,
@@ -169,6 +192,7 @@ export const useChatGridStore = defineStore("chatGrid", () => {
     dropOn,
     setDraftValue,
     setLayout,
+    setVtuberLayoutSelection,
     showControls,
     startDrag,
     toggleEditMode,

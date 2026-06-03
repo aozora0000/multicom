@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import type { Layout } from "../constants";
+import type { Layout, VtuberLayoutId, VtuberLayoutSelection } from "../constants";
 import GithubLink from "./GithubLink.vue";
 import LayoutMenu from "./LayoutMenu.vue";
+import VtuberLayoutMenu from "./VtuberLayoutMenu.vue";
 import XPromoLink from "./XPromoLink.vue";
 
 defineProps<{
   currentLayout: Layout;
   editMode: boolean;
+  effectiveVtuberLayoutId: VtuberLayoutId;
   layoutGrids: Record<Layout, { columns: number; rows: number }>;
   layoutOptions: Layout[];
   promoUrl: string;
   repoUrl: string;
   shareUrl: string;
   status: string;
+  vtuberLayoutOptions: VtuberLayoutId[];
+  vtuberLayoutSelection: VtuberLayoutSelection;
+  vtuberUrl: string;
 }>();
 
 const emit = defineEmits<{
@@ -20,6 +25,7 @@ const emit = defineEmits<{
   hideControls: [];
   openHelp: [];
   selectLayout: [layout: Layout];
+  selectVtuberLayout: [layout: VtuberLayoutSelection];
   toggleEditMode: [];
 }>();
 </script>
@@ -36,9 +42,14 @@ const emit = defineEmits<{
           class="x-now-link"
           text="今これ見てる YouTubeコメントを複数窓で見るやつ"
           label="今これ見てる"
+          tooltip="現在の共有URLをXに投稿"
         />
-        <XPromoLink :href="promoUrl" text="YouTubeコメントを複数窓で見るやつ" />
-        <GithubLink :href="repoUrl" />
+        <XPromoLink
+          :href="promoUrl"
+          text="YouTubeコメントを複数窓で見るやつ"
+          tooltip="アプリをXで宣伝"
+        />
+        <GithubLink :href="repoUrl" tooltip="GitHubリポジトリを開く" />
       </div>
     </div>
 
@@ -66,6 +77,23 @@ const emit = defineEmits<{
       >
         操作欄を隠す
       </button>
+      <div class="external-actions">
+        <VtuberLayoutMenu
+          :effective-layout-id="effectiveVtuberLayoutId"
+          :layout-options="vtuberLayoutOptions"
+          :selection="vtuberLayoutSelection"
+          @select="emit('selectVtuberLayout', $event)"
+        />
+        <a
+          class="repo-link vtuber-link"
+          :href="vtuberUrl"
+          target="_blank"
+          rel="noreferrer"
+          data-tooltip="YouTubeを複数窓でみるやつで動画を開く"
+        >
+          動画を開く
+        </a>
+      </div>
     </div>
 
     <div class="status">
