@@ -11,6 +11,7 @@ function mountControlPanel(props = {}) {
       editMode: false,
       layoutGrids: LAYOUT_GRIDS,
       layoutOptions: ["2x1", "2x2"] as Layout[],
+      promoUrl: "https://aozora0000.github.io/multicom/",
       repoUrl: "https://github.com/aozora0000/multicom",
       shareUrl: "https://example.test/?l=2x2",
       status: "読み込み: 1件",
@@ -26,7 +27,15 @@ describe("ControlPanel", () => {
     expect(wrapper.text()).toContain("YouTubeコメントを複数窓で見るやつ");
     expect(wrapper.text()).toContain("読み込み: 1件");
     expect(wrapper.text()).toContain("https://example.test/?l=2x2");
-    expect(wrapper.find(".repo-link").attributes("href")).toBe("https://github.com/aozora0000/multicom");
+    expect(wrapper.find(".x-promo-link").attributes("href")).toContain("https://twitter.com/intent/tweet");
+    expect(wrapper.find(".x-now-link").text()).toContain("今これ見てる");
+    expect(new URL(wrapper.find(".x-now-link").attributes("href") || "").searchParams.get("url")).toBe(
+      "https://example.test/?l=2x2",
+    );
+    expect(new URL(wrapper.find(".x-now-link").attributes("href") || "").searchParams.get("text")).toBe(
+      "今これ見てる YouTubeコメントを複数窓で見るやつ",
+    );
+    expect(wrapper.find(".github-link").attributes("href")).toBe("https://github.com/aozora0000/multicom");
     expect(wrapper.findAll("button").some((button) => button.text() === "編集")).toBe(true);
   });
 

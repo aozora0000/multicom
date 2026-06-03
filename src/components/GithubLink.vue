@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <a class="repo-link" :href="href" target="_blank" rel="noreferrer">
+  <a class="repo-link github-link" :href="href" target="_blank" rel="noreferrer">
     <svg class="repo-link-icon" viewBox="0 0 16 16" aria-hidden="true">
       <path
         fill="currentColor"

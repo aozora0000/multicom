@@ -7,6 +7,7 @@ import HelpModal from "./components/HelpModal.vue";
 import { useChatGridStore } from "./stores/chatGrid";
 
 const repoUrl = "https://github.com/aozora0000/multicom";
+const promoUrl = "https://aozora0000.github.io/multicom/";
 
 const store = useChatGridStore();
 const { controlsHidden, currentLayout, draggedIndex, draftValues, editMode, helpOpen, status, visibleValues } =
@@ -40,6 +41,7 @@ function handleKeydown(event: KeyboardEvent) {
       :edit-mode="editMode"
       :layout-grids="store.layoutGrids"
       :layout-options="store.layoutOptions"
+      :promo-url="promoUrl"
       :repo-url="repoUrl"
       :share-url="store.shareUrl"
       :status="status"

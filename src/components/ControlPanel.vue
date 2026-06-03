@@ -2,12 +2,14 @@
 import type { Layout } from "../constants";
 import GithubLink from "./GithubLink.vue";
 import LayoutMenu from "./LayoutMenu.vue";
+import XPromoLink from "./XPromoLink.vue";
 
 defineProps<{
   currentLayout: Layout;
   editMode: boolean;
   layoutGrids: Record<Layout, { columns: number; rows: number }>;
   layoutOptions: Layout[];
+  promoUrl: string;
   repoUrl: string;
   shareUrl: string;
   status: string;
@@ -28,7 +30,16 @@ const emit = defineEmits<{
       <div class="top-copy">
         <span class="title">YouTubeコメントを複数窓で見るやつ</span>
       </div>
-      <GithubLink :href="repoUrl" />
+      <div class="top-links">
+        <XPromoLink
+          :href="shareUrl"
+          class="x-now-link"
+          text="今これ見てる YouTubeコメントを複数窓で見るやつ"
+          label="今これ見てる"
+        />
+        <XPromoLink :href="promoUrl" text="YouTubeコメントを複数窓で見るやつ" />
+        <GithubLink :href="repoUrl" />
+      </div>
     </div>
 
     <div class="button-row">

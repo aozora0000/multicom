@@ -101,6 +101,13 @@ body {
   min-width: 0;
 }
 
+.top-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .layout-select-wrap {
   display: flex;
   align-items: center;
